@@ -1,4 +1,5 @@
 `default_nettype none
+
 module tt_um_ay5876_moore_machine (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
@@ -9,17 +10,15 @@ module tt_um_ay5876_moore_machine (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
- // input
- wire x1 = ui_in[0];
- // output
- wire z1;
- reg [1:3] y;
- reg [1:3] next_state;
- parameter state_a=3'b000,
- state_b=3'b010,
- state_c=3'b110,
- state_d=3'b100,
- state_e=3'b011;
+
+    // Lab 4 Internal Signals (Page 82) 
+    wire x1 = ui_in[0];
+    wire z1;
+    reg [1:3] y;
+    reg [1:3] next_state;
+
+    // State parameters 
+    parameter state_a=3'b000, state_b=3'b010, state_c=3'b110, state_d=3'b100, state_e=3'b011;
  always@(posedge clk)
  begin
  if(~rst_n)
@@ -72,4 +71,4 @@ next_state=state_a;
  assign uio_oe = 0;
  // List all unused inputs to prevent warnings
  wire _unused = &{ena, ui_in[7:1], uio_in, 1'b0};
-endmodule     
+endmodule
