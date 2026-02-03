@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title: "D flip flop"
-  author: "Islam"
+  title: "Moore Machine"
+  author: "ay5876"
   discord: ""
-  description: "Behavioral description of D flip-flop"
+  description: " description of moore machinge"
   language: "Verilog"
   clock_hz: 100000000
   tiles: "1x1"
