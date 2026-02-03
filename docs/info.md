@@ -6,21 +6,26 @@ markdown. Each image must be less than 512 kb in size, and the combined
 size of all images must be less than 1 MB.
 -->
 ## How it works
-A D flip-flop is a digital circuit that stores a single bit of data.
-It's a clocked sequential logic circuit, meaning it changes its output
-based on the data input and a clock signal. Essentially, it captures
-and holds the value present at its input (D) when the clock signal
-transitions from low to high (rising edge).
+A Moore machine is a type of finite state machine where the output is
+solely determined by its current state. This means that the output
+changes only when the machine transitions to a new state.
 ## How to test
-Refer to the state table of a d flip-flop.
+To check if a Moore machine is working correctly, you need to verify
+that its output changes based on the current state, not the current
+input, and that the output is consistent with the state transitions
+defined in its state diagram. You can do this by simulating the machine
+with various inputs and observing the corresponding outputs, or by
+implementing the machine in hardware or software and testing its
+behavior.
 ## External hardware
 List external hardware used in your project (e.g. PMOD, LED display,
 etc), if any
 NONE
 ## Pinout
 ### Inputs
-| Pin | Name | |---------|------|
-| ui[0] | din |
+| Pin | Name |
+|---------|------|
+| ui[0] | x1 |
 | ui[1] | |
 | ui[2] | |
 | ui[3] | |
@@ -29,12 +34,12 @@ NONE
 | ui[6] | |
 | ui[7] | |
 ### Outputs
-| Pin | Name | |---------|------|
-| uo[0] |
-q |
-| uo[1] | |
-| uo[2] | |
-| uo[3] | |
+| Pin | Name |
+|---------|------|
+| uo[0] | y[1] |
+| uo[1] | y[2] |
+| uo[2] | y[3] |
+| uo[3] | z1 |
 | uo[4] | |
 | uo[5] | |
 | uo[6] | |
