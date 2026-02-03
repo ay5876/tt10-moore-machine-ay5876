@@ -4,7 +4,7 @@
 // ---------------------------
 // Your Moore Machine (manual)
 // ---------------------------
-module moore_ssm (
+module tt_um_ay5876_moore_machine (
     input  wire rst,      // active-low reset
     input  wire clk,
     input  wire x1,
