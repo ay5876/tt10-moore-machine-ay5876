@@ -1,16 +1,15 @@
-# Tiny Tapeout project information
 project:
-  title: "Moore Machine"
+  title: "Moore Machine (SSM)"
   author: "ay5876"
   discord: ""
-  description: " description of moore machinge"
+  description: "Moore state machine lab (SSM) implemented for Tiny Tapeout tt10."
   language: "Verilog"
   clock_hz: 100000000
   tiles: "1x1"
- project:
   top_module: "tt_um_ay5876_moore_machine"
   source_files:
     - "tt_um_ay5876_moore_machine.v"
+
 
 
 pinout:
