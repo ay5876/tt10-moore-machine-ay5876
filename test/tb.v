@@ -26,10 +26,10 @@ module tb;
         .rst_n(rst_n)
     );
 
-    // Waveform dumping for surfer-project.org
+    // Waveform dumping (Fixed Case Sensitivity)
     initial begin
-        $dumpFILE("tb.vcd");
-        $dumpvars(0, tb);
+        $dumpfile("tb.vcd");  // Must be lowercase
+        $dumpvars(0, tb);     // Must be lowercase
         #1;
     end
 endmodule
