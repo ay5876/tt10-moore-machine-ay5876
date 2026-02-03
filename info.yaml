@@ -7,9 +7,11 @@ project:
   language: "Verilog"
   clock_hz: 100000000
   tiles: "1x1"
-  top_module: "tt_um_ay5876_d_flip_flop"
+ project:
+  top_module: "tt_um_ay5876_moore_machine"
   source_files:
-    - "tt_um_ay5876_d_flip_flop.v"
+    - "tt_um_ay5876_moore_machine.v"
+
 
 pinout:
   # Inputs (ONLY ui[] here — clk/rst/ena are NOT listed)
