@@ -15,7 +15,7 @@ module tt_um_ay5876_moore_machine (
     wire z1;
 
     // Your Moore machine module
-    moore_ssm dut (
+   tt_um_ay5876_moore_machine (
         .rst(rst_n),       // your module uses active-low reset already
         .clk(clk),
         .x1(ui_in[0]),
