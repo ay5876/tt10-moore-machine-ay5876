@@ -1,7 +1,0 @@
-{
-  "top_module": "tt_um_ay5876_moore_machine",
-  "sources": [
-    "tt_um_ay5876_moore_machine.v",
-    "moore_ssm.v"
-  ]
-}
