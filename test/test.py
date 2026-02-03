@@ -1,57 +1,41 @@
-`default_nettype none
+import cocotb
+from cocotb.clock import Clock
+from cocotb.triggers import ClockCycles, RisingEdge, FallingEdge
 
-module tt_um_ay5876_moore_machine (
-    input  wire [7:0] ui_in,    // Dedicated inputs
-    output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path
-    input  wire       ena,      // always 1
-    input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
-);
+@cocotb.test()
+async def test_project(dut):
+    dut._log.info("Starting Moore Machine Test")
 
-    // Internal Signals
-    wire x1 = ui_in[0];
-    wire z1;
-    reg [2:0] y;          // Changed to [2:0] for standard 0-based indexing
-    reg [2:0] next_state;
+    # Start the clock
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
 
-    // State parameters (Matching Page 82)
-    parameter state_a=3'b000, state_b=3'b010, state_c=3'b110, state_d=3'b100, state_e=3'b011;
-
-    // Sequential State Update
-    always @(posedge clk) begin
-        if (!rst_n)
-            y <= state_a;
-        else
-            y <= next_state;
-    end
-
-    // Moore Output Logic: Depends ONLY on the state
-    // In Lab 4, z1 is high when in state_c or state_e depending on the specific sequence
-    assign z1 = (y == state_c || y == state_e); 
-
-    // Combinational Next State Logic
-    always @(*) begin
-        case(y)
-            state_a: next_state = x1 ? state_b : state_a;
-            state_b: next_state = x1 ? state_c : state_a;
-            state_c: next_state = x1 ? state_c : state_d;
-            state_d: next_state = x1 ? state_e : state_a;
-            state_e: next_state = x1 ? state_c : state_a;
-            default: next_state = state_a;
-        endcase
-    end
-
-    // Pin Assignments (Must drive all 8 pins)
-    assign uo_out[0] = y[0];
-    assign uo_out[1] = y[1];
-    assign uo_out[2] = y[2];
-    assign uo_out[3] = z1;
-    assign uo_out[7:4] = 4'b0000;
+    # Initialize inputs to known states (Prevents GL 'X' crashes)
+    dut.ena.value = 1
+    dut.ui_in.value = 0
+    dut.uio_in.value = 0
     
-    assign uio_out = 8'b00000000;
-    assign uio_oe  = 8'b00000000;
+    # 1. Power-on Reset: Must be long enough for gates to initialize
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 5)
 
-endmodule
+    # 2. Stimulus Sequence
+    # We use ui_in[0] for x1 as defined in your Verilog
+    x1_sequence = [0, 1, 1, 0, 1]
+
+    for x1 in x1_sequence:
+        dut.ui_in[0].value = x1
+        
+        # Wait for the clock edge
+        await RisingEdge(dut.clk)
+        # Wait for the FallingEdge to let Gate-Level delays settle
+        await FallingEdge(dut.clk) 
+        
+        # Log outputs using safe string conversion
+        # uo_out[3] is z1, uo_out[2:0] is state y
+        uo_val = str(dut.uo_out.value)
+        dut._log.info(f"Input x1={x1} | uo_out={uo_val}")
+
+    dut._log.info("Finished Moore Machine test successfully")
