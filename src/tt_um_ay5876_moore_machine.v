@@ -1,4 +1,3 @@
-`timescale 1ns/1ps
 `default_nettype none
 
 module tt_um_ay5876_moore_machine (
@@ -12,32 +11,31 @@ module tt_um_ay5876_moore_machine (
     input  wire       rst_n
 );
 
+    // Use a normal descending range (no [1:3])
     wire [2:0] y;
-    wire z1;
+    wire       z1;
 
-    // IMPORTANT: instantiate moore_ssm (not this top module)
-    moore_ssm dut (
-        .rst_n(rst_n),
-        .clk(clk),
-        .x1(ui_in[0]),
-        .y(y),
-        .z1(z1)
+    // Instantiate your Moore core (NOT the top module)
+    moore_ssm u_core (
+        .clk   (clk),
+        .rst_n (rst_n),
+        .x1    (ui_in[0]),
+        .y     (y),
+        .z1    (z1)
     );
 
-    // Outputs
+    // Output mapping
     assign uo_out[0] = y[0];
     assign uo_out[1] = y[1];
     assign uo_out[2] = y[2];
     assign uo_out[3] = z1;
     assign uo_out[7:4] = 4'b0000;
 
-    // No bidir used
+    // Unused bidir pins
     assign uio_out = 8'b0;
     assign uio_oe  = 8'b0;
 
-    // Silence unused warnings
-    wire _unused = &{ena, ui_in[7:1], uio_in, 1'b0};
+    // 'ena' can be unused (allowed). If you want:
+    // wire _unused = ena | uio_in[0];
 
 endmodule
-
-`default_nettype wire
