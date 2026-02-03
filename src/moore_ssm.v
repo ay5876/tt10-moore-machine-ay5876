@@ -1,46 +1,45 @@
 `default_nettype none
 
 module moore_ssm (
-    input  wire       clk,
-    input  wire       rst_n,   // active-low reset
-    input  wire       x1,
-    output reg  [2:0] y,
-    output reg        z1
+    input  wire rst_n,   // active-low reset
+    input  wire clk,
+    input  wire x1,
+    output reg  [2:0] y, // use [2:0] (NOT [1:3]) to satisfy lint
+    output wire z1
 );
 
-    // 4-state example Moore machine
-    typedef enum logic [1:0] {S0, S1, S2, S3} state_t;
-    state_t state, next;
+    reg [2:0] next_state;
 
-    // State register
+    localparam state_a = 3'b000,
+               state_b = 3'b010,
+               state_c = 3'b110,
+               state_d = 3'b100,
+               state_e = 3'b011;
+
+    // State register (async reset so y never starts as X)
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) state <= S0;
-        else        state <= next;
+        if (!rst_n)
+            y <= state_a;
+        else
+            y <= next_state;
     end
+
+    // Manual’s idea: output depends on clk level and MSB of state
+    assign z1 = (~clk) & y[2];   // y[2] corresponds to "y[3]" in the manual
 
     // Next-state logic
     always @(*) begin
-        next = state;
-        case (state)
-            S0: next = x1 ? S1 : S0;
-            S1: next = x1 ? S2 : S0;
-            S2: next = x1 ? S3 : S0;
-            S3: next = x1 ? S3 : S0;
-            default: next = S0;
-        endcase
-    end
-
-    // Moore outputs depend only on state
-    always @(*) begin
-        y  = 3'b000;
-        z1 = 1'b0;
-        case (state)
-            S0: begin y = 3'b001; z1 = 1'b0; end
-            S1: begin y = 3'b010; z1 = 1'b0; end
-            S2: begin y = 3'b100; z1 = 1'b0; end
-            S3: begin y = 3'b111; z1 = 1'b1; end
-            default: begin y = 3'b001; z1 = 1'b0; end
+        next_state = y;
+        case (y)
+            state_a: next_state = (x1 == 1'b0) ? state_a : state_b;
+            state_b: next_state = (x1 == 1'b0) ? state_a : state_c;
+            state_c: next_state = (x1 == 1'b0) ? state_d : state_c;
+            state_d: next_state = (x1 == 1'b0) ? state_a : state_e;
+            state_e: next_state = (x1 == 1'b0) ? state_a : state_c;
+            default: next_state = state_a;
         endcase
     end
 
 endmodule
+
+`default_nettype wire
