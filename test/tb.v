@@ -2,16 +2,17 @@
 `default_nettype none
 
 module tb;
-
+    // These MUST be regs so cocotb can drive them from Python
     reg clk;
     reg rst_n;
+    reg ena;
+    reg [7:0] ui_in;
+    reg [7:0] uio_in;
 
-    wire [7:0] ui_in;
+    // These are wires because they are outputs from the DUT
     wire [7:0] uo_out;
-    wire [7:0] uio_in;
     wire [7:0] uio_out;
     wire [7:0] uio_oe;
-    wire ena;
 
     // Instantiate DUT
     tt_um_ay5876_moore_machine dut (
@@ -25,20 +26,10 @@ module tb;
         .rst_n(rst_n)
     );
 
-    // Clock generation (cocotb also drives clock, this is OK)
+    // Waveform dumping for surfer-project.org
     initial begin
-        clk = 0;
-        forever #5 clk = ~clk;
-    end
-
-    // Dump waveform (OK)
-    initial begin
-        $dumpfile("tb.vcd");
+        $dumpFILE("tb.vcd");
         $dumpvars(0, tb);
+        #1;
     end
-
-    // ❌ NO $finish HERE
-    // ❌ NO stimulus HERE
-    // cocotb controls everything
-
 endmodule
